@@ -6,6 +6,8 @@
 
         public MainPage()
         {
+            MainViewModel viewModel = new ();
+            BindingContext = viewModel;
             InitializeComponent();
         }
 
