@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using QuickConvert.Interfaces;
+using QuickConvert.Services;
+using QuickConvert.ViewModels;
 
 namespace QuickConvert
 {
@@ -7,6 +10,11 @@ namespace QuickConvert
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<RateService>();
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>

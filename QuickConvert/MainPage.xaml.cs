@@ -1,27 +1,24 @@
-﻿namespace QuickConvert
+﻿using QuickConvert.ViewModels;
+
+namespace QuickConvert
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        #region data members
+        private readonly MainViewModel _viewModel;
+        #endregion
 
-        public MainPage()
+        public MainPage(MainViewModel viewModel)
         {
-            MainViewModel viewModel = new ();
-            BindingContext = viewModel;
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            base.OnAppearing();
+            await _viewModel.LoadRate();
         }
     }
-
 }
