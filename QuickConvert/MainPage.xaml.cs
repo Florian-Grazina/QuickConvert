@@ -15,10 +15,10 @@ namespace QuickConvert
             InitializeComponent();
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
-            await _viewModel.LoadRate();
+            _viewModel.OnAppearing();
         }
     }
 }

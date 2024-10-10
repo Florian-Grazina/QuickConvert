@@ -11,6 +11,10 @@
         <VerticalStackLayout Padding="30"
                              Spacing="25">
 
+            <Label Text="{Binding Date}" />
+            <Label Text="{Binding ExpirationDate}"/>
+
+            <Button Text="Force resfresh" Command="{Binding ForceRefreshRateCommand}"/>
 
         </VerticalStackLayout>
     </ScrollView>
