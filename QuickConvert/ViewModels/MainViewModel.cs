@@ -1,19 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using QuickConvert.Managers;
 using QuickConvert.Models;
-using QuickConvert.Services;
 
 namespace QuickConvert.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
         #region data members
-        private readonly RateService _rateService;
+        private readonly RateManager _rateService;
         private readonly Rate? _rate;
         #endregion
 
         #region constructor
-        public MainViewModel(RateService rateService)
+        public MainViewModel(RateManager rateService)
         {
             _rateService = rateService;
             Title = AppSettingsManager.Instance.AppName;
@@ -28,7 +27,6 @@ namespace QuickConvert.ViewModels
         [ObservableProperty]
         private string title;
 
-        public string RateValue => _rate?.Value.ToString() ?? string.Empty;
         #endregion
 
         #region public methods

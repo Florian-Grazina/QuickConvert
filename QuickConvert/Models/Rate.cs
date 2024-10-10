@@ -5,15 +5,17 @@ namespace QuickConvert.Models
 {
     public record Rate
     {
-        public DateTime Date { get; } = default!;
-        public DateTime ExpirationDate { get; } = default!;
-        public decimal Value { get; } = default!;
+        public Currency BaseCurrency { get; }
+        public DateTime Date { get; }
+        public DateTime ExpirationDate { get; }
+        public ConversionRate Values { get; }
 
-        public Rate(decimal value)
+        public Rate(RateApiObject rateApiObject)
         {
             Date = DateTime.Now;
             ExpirationDate = Date.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
-            Value = value;
+            BaseCurrency = Enum.Parse<Currency>(rateApiObject.BaseCode);
+            Values = rateApiObject.ConversionRates;
         }
     }
 }

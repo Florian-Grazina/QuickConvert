@@ -2,7 +2,7 @@
 
 namespace QuickConvert.Interfaces
 {
-    public interface IRateService
+    public interface IRateManager
     {
         Task<Rate> GetRate();
     }

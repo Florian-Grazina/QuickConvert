@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using QuickConvert.Interfaces;
-using QuickConvert.Services;
+using QuickConvert.Managers;
 using QuickConvert.ViewModels;
 
 namespace QuickConvert
@@ -13,7 +13,7 @@ namespace QuickConvert
 
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<MainViewModel>();
-            builder.Services.AddTransient<RateService>();
+            builder.Services.AddTransient<RateManager>();
 
             builder
                 .UseMauiApp<App>()
