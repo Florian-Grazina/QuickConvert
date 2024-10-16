@@ -17,12 +17,16 @@ namespace QuickConvert.ViewModels
         {
             _isBusy = true;
             _rateManager = rateService;
-            Title = AppSettingsManager.Instance.AppName;
+            Rate = default!;
+            //Title = AppSettingsManager.Instance.AppName;
+
+            Title = "QuickConvert";
+            Output = "SALUT BITCH";
         }
         #endregion
 
         #region properties
-        public AppSettingsManager Settings => AppSettingsManager.Instance;
+        //public AppSettingsManager Settings => AppSettingsManager.Instance;
         public DateTime Date => Rate.Date;
         public DateTime ExpirationDate => Rate.ExpirationDate;
         #endregion
@@ -32,14 +36,17 @@ namespace QuickConvert.ViewModels
         private string title;
 
         [ObservableProperty]
-        private Rate rate = default!;
+        private string output;
+
+        [ObservableProperty]
+        private Rate rate;
         #endregion
 
         #region commands
         [RelayCommand]
-        private async Task ForceRefreshRate()
+        public async Task ForceRefreshRate()
         {
-            if(_isBusy)
+            if (_isBusy)
                 return;
 
             _isBusy = true;
@@ -52,18 +59,38 @@ namespace QuickConvert.ViewModels
         #region public methods
         public async void OnAppearing()
         {
-            Rate? newRate = Settings.Rate ?? await _rateManager.GetRate();
+            //Rate? newRate = Settings.Rate ?? await _rateManager.GetRate();
+            Rate newRate = await _rateManager.GetRate();
             SetRate(newRate);
             _isBusy = false;
+
+            RefreshView();
+        }
+
+        public void Convert(string input)
+        {
+            int inputAmount = 0;
+
+            if(!string.IsNullOrEmpty(input))
+                inputAmount = int.Parse(input);
+
+            double outputAmount = inputAmount * Rate.Values.JPY;
+            Output = outputAmount.ToString();
         }
         #endregion
 
         #region private methods
         private void SetRate(Rate rate)
         {
-            Settings.Rate = rate;
+            //Settings.Rate = rate;
+            Rate = rate;
+        }
+
+        public void RefreshView()
+        {
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
+            OnPropertyChanged(nameof(Output));
         }
         #endregion
     }

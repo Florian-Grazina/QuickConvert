@@ -20,5 +20,16 @@ namespace QuickConvert
             base.OnAppearing();
             _viewModel.OnAppearing();
         }
+
+        private async void ForceRefresh(object sender, EventArgs e)
+        {
+            await _viewModel.ForceRefreshRate();
+            _viewModel.RefreshView();
+        }
+
+        private void Entry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _viewModel.Convert(e.NewTextValue);
+        }
     }
 }

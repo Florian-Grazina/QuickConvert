@@ -11,9 +11,9 @@ namespace QuickConvert
         {
             var builder = MauiApp.CreateBuilder();
 
-            builder.Services.AddTransient<MainPage>();
-            builder.Services.AddTransient<MainViewModel>();
-            builder.Services.AddTransient<RateManager>();
+            builder.Services.AddScoped<MainPage>();
+            builder.Services.AddScoped<MainViewModel>();
+            builder.Services.AddScoped<RateManager>();
 
             builder
                 .UseMauiApp<App>()

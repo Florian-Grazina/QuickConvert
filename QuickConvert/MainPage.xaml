@@ -4,17 +4,29 @@
              xmlns:vm="clr-namespace:QuickConvert.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              x:Class="QuickConvert.MainPage"
-             x:DataType="vm:MainViewModel"
              Title="{Binding Title}">
 
     <ScrollView>
         <VerticalStackLayout Padding="30"
                              Spacing="25">
 
-            <Label Text="{Binding Date}" />
-            <Label Text="{Binding ExpirationDate}"/>
+            <FlexLayout JustifyContent="SpaceBetween">
+                <Label Text="Date: " />
+                <Label Text="{Binding Date}" />
+            </FlexLayout>
 
-            <Button Text="Force resfresh" Command="{Binding ForceRefreshRateCommand}"/>
+            <FlexLayout JustifyContent="SpaceBetween">
+                <Label Text="Next Refresh: " />
+                <Label Text="{Binding ExpirationDate}"/>
+            </FlexLayout>
+
+            <Entry Keyboard="Numeric"
+                   TextChanged="Entry_TextChanged"/>
+
+            <Label Text="{Binding Output}"/>
+
+            <Button Text="Force Refresh"
+                    Clicked="ForceRefresh" />
 
         </VerticalStackLayout>
     </ScrollView>

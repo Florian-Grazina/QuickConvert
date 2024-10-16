@@ -13,7 +13,8 @@ namespace QuickConvert.Models
         public Rate(RateApiObject rateApiObject)
         {
             Date = DateTime.Now;
-            ExpirationDate = Date.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
+            //ExpirationDate = Date.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
+            ExpirationDate = Date.AddHours(4);
             BaseCurrency = Enum.Parse<Currency>(rateApiObject.BaseCode);
             Values = rateApiObject.ConversionRates;
         }
