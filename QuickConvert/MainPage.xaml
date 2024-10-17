@@ -3,32 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:QuickConvert.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:font="clr-namespace:QuickConvert.FontAwesome"
              x:Class="QuickConvert.MainPage"
              Title="{Binding Title}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30"
-                             Spacing="25">
+    <VerticalStackLayout>
 
-            <FlexLayout JustifyContent="SpaceBetween">
-                <Label Text="Date: " />
-                <Label Text="{Binding Date}" />
-            </FlexLayout>
+        <Border Margin="10">
+            <Entry Text="{Binding Input}"
+                   Keyboard="Numeric" />
+        </Border>
 
-            <FlexLayout JustifyContent="SpaceBetween">
-                <Label Text="Next Refresh: " />
-                <Label Text="{Binding ExpirationDate}"/>
-            </FlexLayout>
+        <font:FontAwesomeLabel Text="{x:Static font:FontAwesomeIcon.ArrowsRotate}"
+                               FontSize="40"
+                               HorizontalOptions="End"
+                               Margin="20,5,20,5"
+                               Background="Transparent"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"
+                               />
 
-            <Entry Keyboard="Numeric"
-                   TextChanged="Entry_TextChanged"/>
+        <Border Margin="10">
+            <Entry Text="{Binding Output}"
+                   IsReadOnly="True" />
+        </Border>
 
-            <Label Text="{Binding Output}"/>
 
-            <Button Text="Force Refresh"
-                    Clicked="ForceRefresh" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+        <Button Text="Refresh"
+                Command="{Binding ForceRefreshRateCommand}"
+                WidthRequest="150" />
+    </VerticalStackLayout>
 
 </ContentPage>

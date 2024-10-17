@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using QuickConvert.Managers;
 using QuickConvert.Models;
+using System.Globalization;
 
 namespace QuickConvert.ViewModels
 {
@@ -10,6 +11,8 @@ namespace QuickConvert.ViewModels
         #region data members
         private readonly RateManager _rateManager;
         private bool _isBusy;
+
+        private string input;
         #endregion
 
         #region constructor
@@ -21,7 +24,6 @@ namespace QuickConvert.ViewModels
             //Title = AppSettingsManager.Instance.AppName;
 
             Title = "QuickConvert";
-            Output = "SALUT BITCH";
         }
         #endregion
 
@@ -40,6 +42,16 @@ namespace QuickConvert.ViewModels
 
         [ObservableProperty]
         private Rate rate;
+
+        public string Input
+        {
+            get => input;
+            set
+            {
+                SetProperty(ref input, value);
+                Convert(value);
+            }
+        }
         #endregion
 
         #region commands
@@ -69,13 +81,20 @@ namespace QuickConvert.ViewModels
 
         public void Convert(string input)
         {
-            int inputAmount = 0;
+            try
+            {
+                _ = !double.TryParse(input, out double result);
 
-            if(!string.IsNullOrEmpty(input))
-                inputAmount = int.Parse(input);
-
-            double outputAmount = inputAmount * Rate.Values.JPY;
-            Output = outputAmount.ToString();
+                double? outputAmount = result * Rate?.Values.JPY;
+                Output = outputAmount.HasValue ? outputAmount.Value.ToString("N2", new CultureInfo("en-EN")) : "0.00";
+            }
+            catch(Exception ex)
+            {
+                // manage exception
+                Console.WriteLine(ex);
+                Output = "An error occured";
+                throw;
+            }
         }
         #endregion
 
@@ -84,13 +103,14 @@ namespace QuickConvert.ViewModels
         {
             //Settings.Rate = rate;
             Rate = rate;
+            RefreshView();
         }
 
         public void RefreshView()
         {
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
-            OnPropertyChanged(nameof(Output));
+            Convert(Input);
         }
         #endregion
     }

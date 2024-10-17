@@ -1,4 +1,4 @@
-﻿namespace QuickConvert
+﻿namespace QuickConvert.Models
 {
     public enum Currency
     {
