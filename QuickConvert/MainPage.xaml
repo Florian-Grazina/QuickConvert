@@ -14,7 +14,8 @@
                    Keyboard="Numeric" />
         </Border>
 
-        <font:FontAwesomeLabel Text="{x:Static font:FontAwesomeIcon.ArrowsRotate}"
+        <Button Text="{x:Static font:FontAwesomeIcon.ArrowsRotate}"
+                FontFamily="SolidFA"
                                FontSize="40"
                                HorizontalOptions="End"
                                Margin="20,5,20,5"
