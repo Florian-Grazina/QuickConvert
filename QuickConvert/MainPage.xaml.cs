@@ -1,4 +1,5 @@
-﻿using QuickConvert.ViewModels;
+﻿using QuickConvert.Managers;
+using QuickConvert.ViewModels;
 
 namespace QuickConvert
 {
@@ -13,12 +14,6 @@ namespace QuickConvert
             _viewModel = viewModel;
             BindingContext = _viewModel;
             InitializeComponent();
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            _viewModel.OnAppearing();
         }
 
         private async void ForceRefresh(object sender, EventArgs e)

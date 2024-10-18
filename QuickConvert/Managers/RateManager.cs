@@ -1,45 +1,83 @@
-﻿using Newtonsoft.Json;
-using QuickConvert.Interfaces;
-using QuickConvert.Models;
+﻿
+using QuickConvert.API.Enums;
+using QuickConvert.API.Models;
+using QuickConvert.API.Services;
+using System.Reflection;
 
 namespace QuickConvert.Managers
 {
-    public class RateManager : IRateManager
+    public class RateManager
     {
         #region data members
-        private readonly HttpClient _client;
-        private const string _url = $"https://v6.exchangerate-api.com/v6/{_apiKey}/latest/EUR";
-        private const string _apiKey = "7fbbf4d77c8cdceff04d478e";
+        private static RateManager _instance = default!;
+        private static readonly object lockObject = new ();
+
+        private bool _isBusy;
+
+        private readonly ApiClient _apiClient;
+        private readonly List<BaseCurrency> _baseCurrencies;
         #endregion
 
         #region constructor
-        public RateManager()
+        private RateManager()
         {
-            _client = new();
+            _apiClient = new ApiClient();
+            _baseCurrencies = [];
+        }
+
+        public static RateManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    lock (lockObject)
+                        _instance ??= new RateManager();
+
+                return _instance;
+            }
         }
         #endregion
 
         #region public methods
-        public async Task<Rate> GetRate()
+        public async Task Init() => await LoadBaseCurrencies();
+
+        public double GetRate(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
         {
             try
             {
-                HttpResponseMessage response = await _client.GetAsync(_url);
-                if (response.IsSuccessStatusCode)
-                {
-                    string content = await response.Content.ReadAsStringAsync();
-                    RateApiObject? rateApi = JsonConvert.DeserializeObject<RateApiObject>(content);
+                BaseCurrency baseCurrency = _baseCurrencies.Find(baseCurrency => baseCurrency.BaseCurrencyCode == baseCurrencyCode) ?? throw new Exception($"Impossible to find the currency code '{baseCurrencyCode}'");
 
-                    Rate? rate = rateApi != null ? new Rate(rateApi) : null;
-                    return rate ?? throw new Exception("Failed to deserialize rate object");
-                }
-                throw new Exception("Failed to get rate");
+                PropertyInfo? property = typeof(ConversionRates).GetProperty(targetCurrencyCode.ToString());
+                if (property != null)
+                    return (double)property.GetValue(baseCurrency.ConversionRates)!;
+
+                throw new Exception($"Impossible to find the currency code '{targetCurrencyCode}'");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // deal with exception
+                Console.WriteLine(ex);
                 throw;
             }
+        }
+
+        public async Task<double> Refresh(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
+        {
+            await LoadBaseCurrencies();
+            return GetRate(baseCurrencyCode, targetCurrencyCode);
+        }
+        #endregion
+
+        #region private methods
+        private async Task LoadBaseCurrencies()
+        {
+            _isBusy = true;
+            foreach (BaseCurrencyCode baseCurrencyCode in Enum.GetValues<BaseCurrencyCode>())
+            {
+                ConversionRates conversionRates = await _apiClient.GetConversionRatesByCurrencyCode(baseCurrencyCode);
+                BaseCurrency baseCurrency = new (baseCurrencyCode, conversionRates);
+                _baseCurrencies.Add(baseCurrency);
+            }
+            _isBusy = false;
         }
         #endregion
     }

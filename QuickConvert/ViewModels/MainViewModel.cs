@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QuickConvert.API.Enums;
 using QuickConvert.Managers;
-using QuickConvert.Models;
 using System.Globalization;
 
 namespace QuickConvert.ViewModels
@@ -12,36 +12,45 @@ namespace QuickConvert.ViewModels
         private readonly RateManager _rateManager;
         private bool _isBusy;
 
+        private RateViewModel _rateVM;
+
         private string input;
+        private string output;
         #endregion
 
         #region constructor
-        public MainViewModel(RateManager rateService)
+        public MainViewModel()
         {
             _isBusy = true;
-            _rateManager = rateService;
-            Rate = default!;
+            _rateManager = RateManager.Instance;
             //Title = AppSettingsManager.Instance.AppName;
 
             Title = "QuickConvert";
+
+            _rateVM = new()
+            {
+                Date = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddHours(1),
+                BaseCurrencyCode = BaseCurrencyCode.EUR,
+                TargetCurrencyCode = TargetCurrencyCode.USD
+            };
+
+            _rateVM.Rate = _rateManager.GetRate(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
+            _isBusy = false;
+
+            RefreshView();
         }
         #endregion
 
         #region properties
         //public AppSettingsManager Settings => AppSettingsManager.Instance;
-        public DateTime Date => Rate.Date;
-        public DateTime ExpirationDate => Rate.ExpirationDate;
+        public DateTime Date => _rateVM.Date;
+        public DateTime ExpirationDate => _rateVM.ExpirationDate;
         #endregion
 
         #region observable properties
         [ObservableProperty]
         private string title;
-
-        [ObservableProperty]
-        private string output;
-
-        [ObservableProperty]
-        private Rate rate;
 
         public string Input
         {
@@ -49,7 +58,22 @@ namespace QuickConvert.ViewModels
             set
             {
                 SetProperty(ref input, value);
-                Convert(value);
+                output = Convert(value);
+                RefreshView();
+            }
+        }
+
+        public string Output
+        {
+            get => output;
+            set
+            {
+                if(value == output)
+                    return;
+
+                SetProperty(ref output, value);
+                input = Convert(value, true);
+                RefreshView();
             }
         }
         #endregion
@@ -62,31 +86,21 @@ namespace QuickConvert.ViewModels
                 return;
 
             _isBusy = true;
-            Rate rate = await _rateManager.GetRate();
-            SetRate(rate);
+            _rateVM.Rate = await _rateManager.Refresh(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
             _isBusy = false;
         }
         #endregion
 
         #region public methods
-        public async void OnAppearing()
-        {
-            //Rate? newRate = Settings.Rate ?? await _rateManager.GetRate();
-            Rate newRate = await _rateManager.GetRate();
-            SetRate(newRate);
-            _isBusy = false;
-
-            RefreshView();
-        }
-
-        public void Convert(string input)
+        public string Convert(string input, bool isReversed = false)
         {
             try
             {
                 _ = !double.TryParse(input, out double result);
 
-                double? outputAmount = result * Rate?.Values.JPY;
-                Output = outputAmount.HasValue ? outputAmount.Value.ToString("N2", new CultureInfo("en-EN")) : "0.00";
+                double? outputAmount = isReversed ? result / _rateVM.Rate : result * _rateVM.Rate;
+
+                return outputAmount.HasValue ? outputAmount.Value.ToString("N2", new CultureInfo("en-EN")) : "#.##";
             }
             catch(Exception ex)
             {
@@ -99,18 +113,12 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region private methods
-        private void SetRate(Rate rate)
-        {
-            //Settings.Rate = rate;
-            Rate = rate;
-            RefreshView();
-        }
-
         public void RefreshView()
         {
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
-            Convert(Input);
+            OnPropertyChanged(nameof(Input));
+            OnPropertyChanged(nameof(Output));
         }
         #endregion
     }

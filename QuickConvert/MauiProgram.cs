@@ -23,11 +23,12 @@ namespace QuickConvert
 
             builder.Services.AddScoped<MainPage>();
             builder.Services.AddScoped<MainViewModel>();
-            builder.Services.AddScoped<RateManager>();
 
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            Task.Run(async () => await RateManager.Instance.Init());
 
             return builder.Build();
         }

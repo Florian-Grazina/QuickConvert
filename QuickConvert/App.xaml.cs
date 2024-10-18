@@ -1,4 +1,6 @@
-﻿namespace QuickConvert
+﻿using QuickConvert.Managers;
+
+namespace QuickConvert
 {
     public partial class App : Application
     {
