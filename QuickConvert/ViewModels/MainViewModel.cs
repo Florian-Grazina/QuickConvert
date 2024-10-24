@@ -57,8 +57,8 @@ namespace QuickConvert.ViewModels
             get => input;
             set
             {
-                SetProperty(ref input, value);
-                output = Convert(value);
+                input = value;
+                Convert(ref input, ref output, true);
                 RefreshView();
             }
         }
@@ -68,11 +68,11 @@ namespace QuickConvert.ViewModels
             get => output;
             set
             {
-                if(value == output)
+                if (value == output)
                     return;
 
                 SetProperty(ref output, value);
-                input = Convert(value, true);
+                Convert(ref input, ref output, true);
                 RefreshView();
             }
         }
@@ -92,17 +92,26 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region public methods
-        public string Convert(string input, bool isReversed = false)
+        public void Convert(ref string input, ref string output, bool isReversed = false)
         {
             try
             {
-                _ = !double.TryParse(input, out double result);
+                if (input == "0")
+                {
+                    output = "0";
+                    input = string.Empty;
+                }
+                else
+                {
+                    _ = !double.TryParse(input, out double inputAmount);
 
-                double? outputAmount = isReversed ? result / _rateVM.Rate : result * _rateVM.Rate;
+                    double outputAmount = isReversed ? inputAmount / _rateVM.Rate : inputAmount * _rateVM.Rate;
 
-                return outputAmount.HasValue ? outputAmount.Value.ToString("N2", new CultureInfo("en-EN")) : "#.##";
+                    output = outputAmount.ToString(new CultureInfo("en-EN"));
+                    input = inputAmount.ToString(new CultureInfo("en-EN"));
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // manage exception
                 Console.WriteLine(ex);
