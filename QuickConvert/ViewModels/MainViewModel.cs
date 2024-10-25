@@ -13,9 +13,10 @@ namespace QuickConvert.ViewModels
         private bool _isBusy;
 
         private RateViewModel _rateVM;
+        private CultureInfo _cultureInfo;
 
-        private string input;
-        private string output;
+        private string input = "0";
+        private string output = "0";
         #endregion
 
         #region constructor
@@ -25,6 +26,9 @@ namespace QuickConvert.ViewModels
             _rateManager = RateManager.Instance;
             //Title = AppSettingsManager.Instance.AppName;
 
+            _cultureInfo = new CultureInfo("en-US");
+            _cultureInfo.NumberFormat.NumberGroupSeparator = " ";
+
             Title = "QuickConvert";
 
             _rateVM = new()
@@ -32,7 +36,7 @@ namespace QuickConvert.ViewModels
                 Date = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddHours(1),
                 BaseCurrencyCode = BaseCurrencyCode.EUR,
-                TargetCurrencyCode = TargetCurrencyCode.USD
+                TargetCurrencyCode = TargetCurrencyCode.JPY
             };
 
             _rateVM.Rate = _rateManager.GetRate(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
@@ -50,16 +54,16 @@ namespace QuickConvert.ViewModels
 
         #region observable properties
         [ObservableProperty]
-        private string title;
+        private string title = default!;
 
         public string Input
         {
             get => input;
             set
             {
-                input = value;
-                Convert(ref input, ref output, true);
-                RefreshView();
+                SetProperty(ref input, value);
+                output = Convert(input);
+                OnPropertyChanged(nameof(Output));
             }
         }
 
@@ -68,19 +72,16 @@ namespace QuickConvert.ViewModels
             get => output;
             set
             {
-                if (value == output)
-                    return;
-
                 SetProperty(ref output, value);
-                Convert(ref input, ref output, true);
-                RefreshView();
+                //input = Convert(value);
+                //OnPropertyChanged(nameof(Input));
             }
         }
         #endregion
 
         #region commands
         [RelayCommand]
-        public async Task ForceRefreshRate()
+        private async Task ForceRefreshRate()
         {
             if (_isBusy)
                 return;
@@ -89,34 +90,36 @@ namespace QuickConvert.ViewModels
             _rateVM.Rate = await _rateManager.Refresh(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
             _isBusy = false;
         }
+
+        [RelayCommand]
+        private void Clear()
+        {
+            Input = "0";
+        }
         #endregion
 
         #region public methods
-        public void Convert(ref string input, ref string output, bool isReversed = false)
+        public string Convert(string input, bool isReversed = false)
         {
             try
             {
-                if (input == "0")
-                {
-                    output = "0";
-                    input = string.Empty;
-                }
+                if (string.IsNullOrEmpty(input) || input == "0" || input == "." || input == ",")
+                    return "0";
+
                 else
                 {
                     _ = !double.TryParse(input, out double inputAmount);
-
                     double outputAmount = isReversed ? inputAmount / _rateVM.Rate : inputAmount * _rateVM.Rate;
 
-                    output = outputAmount.ToString(new CultureInfo("en-EN"));
-                    input = inputAmount.ToString(new CultureInfo("en-EN"));
+                    var ok = outputAmount.ToString("#,#.##", _cultureInfo);
+                    return ok;
                 }
             }
             catch (Exception ex)
             {
                 // manage exception
                 Console.WriteLine(ex);
-                Output = "An error occured";
-                throw;
+                return "An error occured";
             }
         }
         #endregion
@@ -126,8 +129,6 @@ namespace QuickConvert.ViewModels
         {
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
-            OnPropertyChanged(nameof(Input));
-            OnPropertyChanged(nameof(Output));
         }
         #endregion
     }

@@ -1,5 +1,4 @@
-﻿using QuickConvert.Managers;
-using QuickConvert.ViewModels;
+﻿using QuickConvert.ViewModels;
 
 namespace QuickConvert
 {
@@ -14,12 +13,6 @@ namespace QuickConvert
             _viewModel = viewModel;
             BindingContext = _viewModel;
             InitializeComponent();
-        }
-
-        private async void ForceRefresh(object sender, EventArgs e)
-        {
-            await _viewModel.ForceRefreshRate();
-            _viewModel.RefreshView();
         }
     }
 }

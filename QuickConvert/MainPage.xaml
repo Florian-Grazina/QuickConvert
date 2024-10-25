@@ -7,9 +7,9 @@
              x:Class="QuickConvert.MainPage"
              Title="{Binding Title}">
 
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="10">
 
-        <Border Margin="10"
+        <Border 
                 Padding="10,2,2,2">
             <FlexLayout JustifyContent="SpaceBetween">
                 <Entry FlexLayout.Grow="1"
@@ -19,16 +19,9 @@
             </FlexLayout>
         </Border>
 
-        <Button Text="{x:Static font:FontAwesomeIcon.ArrowsRotate}"
-                Margin="20,5,20,5"
-                FontFamily="SolidFA"
-                FontSize="25"
-                HorizontalOptions="End"
-                CornerRadius="10"
-                Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
+        <Border Margin="50,30,50,30"/>
 
-        <Border Margin="10"
+        <Border 
                 Padding="10,2,2,2">
             <FlexLayout JustifyContent="SpaceBetween">
                 <Entry FlexLayout.Grow="1"
@@ -39,6 +32,11 @@
             </FlexLayout>
         </Border>
 
+        <Button Margin="20"
+            Text="Clear"
+                HorizontalOptions="Start"
+                Command="{Binding ClearCommand}"
+                WidthRequest="100" />
 
         <Button Text="Refresh"
                 Command="{Binding ForceRefreshRateCommand}"
