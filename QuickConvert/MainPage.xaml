@@ -9,38 +9,85 @@
 
     <VerticalStackLayout Padding="10">
 
-        <Border 
-                Padding="10,2,2,2">
+        <Border Padding="10,2,2,2"
+                HeightRequest="50">
             <FlexLayout JustifyContent="SpaceBetween">
                 <Entry FlexLayout.Grow="1"
                        Text="{Binding Input}"
                        Keyboard="Numeric" />
-                <Button WidthRequest="80" />
+
+                <Border StrokeThickness="0"
+                        StrokeShape="RoundRectangle 0,10,0,8"
+                        WidthRequest="70">
+                    <Grid>
+
+                        <Image Source="{Binding InputFlag}"
+                               Aspect="AspectFill" />
+                        <Rectangle Margin="-1"
+                                   Fill="Black"
+                                   RadiusY="0"
+                                   Opacity="0.3" />
+                        <Label Text="{Binding InputCode}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="20"
+                               FontAttributes="Bold" />
+                        <Button BackgroundColor="Transparent" />
+                    </Grid>
+                </Border>
+
             </FlexLayout>
         </Border>
 
-        <Border Margin="50,30,50,30"/>
+        <Border Margin="50,30,50,30" />
 
-        <Border 
-                Padding="10,2,2,2">
+        <Border Padding="10,2,2,2"
+                HeightRequest="50">
             <FlexLayout JustifyContent="SpaceBetween">
                 <Entry FlexLayout.Grow="1"
                        Text="{Binding Output}"
                        Keyboard="Numeric" />
 
-                <Button WidthRequest="80" />
+                <Border StrokeThickness="0"
+                        StrokeShape="RoundRectangle 0,10,0,8"
+                        WidthRequest="70">
+                    <Grid>
+
+                        <Image Source="{Binding OutputFlag}"
+                               Aspect="AspectFill" />
+                        <Rectangle Margin="-1"
+                                   Fill="Black"
+                                   RadiusY="0"
+                                   Opacity="0.3" />
+
+                        <Label Text="{Binding OutputCode}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="20"
+                               FontAttributes="Bold" />
+                        <Button BackgroundColor="Transparent" />
+                    </Grid>
+                </Border>
             </FlexLayout>
         </Border>
 
+        <StackLayout Margin="10" HorizontalOptions="Center">
+            <Label HorizontalOptions="Center" Text="{Binding Date}" />
+            <Label HorizontalOptions="Center" Text="{Binding RateInformation}" />
+
+        </StackLayout>
+
         <Button Margin="20"
-            Text="Clear"
-                HorizontalOptions="Start"
+                Text="Clear"
+                HorizontalOptions="Center"
                 Command="{Binding ClearCommand}"
                 WidthRequest="100" />
 
-        <Button Text="Refresh"
+        <!--<Button Text="Refresh"
                 Command="{Binding ForceRefreshRateCommand}"
-                WidthRequest="150" />
+                WidthRequest="150" />-->
+
+
     </VerticalStackLayout>
 
 </ContentPage>

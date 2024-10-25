@@ -9,7 +9,6 @@ namespace QuickConvert.ViewModels
     public partial class MainViewModel : ObservableObject
     {
         #region data members
-        private readonly RateManager _rateManager;
         private bool _isBusy;
 
         private RateViewModel _rateVM;
@@ -23,7 +22,6 @@ namespace QuickConvert.ViewModels
         public MainViewModel()
         {
             _isBusy = true;
-            _rateManager = RateManager.Instance;
             //Title = AppSettingsManager.Instance.AppName;
 
             _cultureInfo = new CultureInfo("en-US");
@@ -39,7 +37,7 @@ namespace QuickConvert.ViewModels
                 TargetCurrencyCode = TargetCurrencyCode.JPY
             };
 
-            _rateVM.Rate = _rateManager.GetRate(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
+            _rateVM.RefreshRate();
             _isBusy = false;
 
             RefreshView();
@@ -50,6 +48,13 @@ namespace QuickConvert.ViewModels
         //public AppSettingsManager Settings => AppSettingsManager.Instance;
         public DateTime Date => _rateVM.Date;
         public DateTime ExpirationDate => _rateVM.ExpirationDate;
+        public string InputCode => _rateVM.BaseCurrencyCode.ToString();
+        public string InputFlag => GetFlagPath(InputCode);
+        public string OutputCode => _rateVM.TargetCurrencyCode.ToString();
+        public string OutputFlag=> GetFlagPath(OutputCode);
+        public double Rate => _rateVM.Rate;
+
+        public string RateInformation => $"1 {InputCode} = {Math.Round(Rate, 2)} {OutputCode}";
         #endregion
 
         #region observable properties
@@ -61,6 +66,9 @@ namespace QuickConvert.ViewModels
             get => input;
             set
             {
+                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                    value = value.TrimStart('0');
+
                 SetProperty(ref input, value);
                 output = Convert(input);
                 OnPropertyChanged(nameof(Output));
@@ -81,13 +89,13 @@ namespace QuickConvert.ViewModels
 
         #region commands
         [RelayCommand]
-        private async Task ForceRefreshRate()
+        private void ForceRefreshRate()
         {
             if (_isBusy)
                 return;
 
             _isBusy = true;
-            _rateVM.Rate = await _rateManager.Refresh(_rateVM.BaseCurrencyCode, _rateVM.TargetCurrencyCode);
+            _rateVM.RefreshRate();
             _isBusy = false;
         }
 
@@ -103,17 +111,11 @@ namespace QuickConvert.ViewModels
         {
             try
             {
-                if (string.IsNullOrEmpty(input) || input == "0" || input == "." || input == ",")
-                    return "0";
+                _ = !double.TryParse(input, out double inputAmount);
+                double outputAmount = isReversed ? inputAmount / _rateVM.Rate : inputAmount * _rateVM.Rate;
 
-                else
-                {
-                    _ = !double.TryParse(input, out double inputAmount);
-                    double outputAmount = isReversed ? inputAmount / _rateVM.Rate : inputAmount * _rateVM.Rate;
-
-                    var ok = outputAmount.ToString("#,#.##", _cultureInfo);
-                    return ok;
-                }
+                string result = outputAmount.ToString("#,#.##", _cultureInfo);
+                return string.IsNullOrEmpty(result) ? "0" : result;
             }
             catch (Exception ex)
             {
@@ -125,10 +127,15 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region private methods
-        public void RefreshView()
+        private void RefreshView()
         {
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
+        }
+
+        private string GetFlagPath(string currencyCode)
+        {
+            return $"Resources/Images/{currencyCode.ToLower()}.png";
         }
         #endregion
     }

@@ -1,4 +1,5 @@
 ﻿using QuickConvert.API.Enums;
+using QuickConvert.Managers;
 
 namespace QuickConvert.ViewModels
 {
@@ -11,5 +12,10 @@ namespace QuickConvert.ViewModels
         public TargetCurrencyCode TargetCurrencyCode { get; set; }
 
         public double Rate { get; set; }
+
+        public void RefreshRate()
+        {
+            Rate = RateManager.Instance.GetRate(BaseCurrencyCode, TargetCurrencyCode);
+        }
     }
 }

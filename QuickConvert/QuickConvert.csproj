@@ -61,6 +61,8 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Fonts\Font Awesome 6 Free-Solid-900.otf" />
+	  <None Remove="Resources\Images\EUR.png" />
+	  <None Remove="Resources\Images\JPY.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -82,6 +84,9 @@
 
 	<ItemGroup>
 	  <Folder Include="Interfaces\" />
+	  <Folder Include="Resources\Controls\" />
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadUnhandledDeviceExceptionQuickConvertHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>
