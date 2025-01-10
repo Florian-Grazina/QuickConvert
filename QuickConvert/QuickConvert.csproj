@@ -87,6 +87,12 @@
 	  <Folder Include="Resources\Controls\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadUnhandledDeviceExceptionQuickConvertHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

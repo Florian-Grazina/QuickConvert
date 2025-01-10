@@ -22,12 +22,10 @@ namespace QuickConvert.ViewModels
         public MainViewModel()
         {
             _isBusy = true;
-            //Title = AppSettingsManager.Instance.AppName;
+            Title = AppSettingsManager.Instance.AppName;
 
             _cultureInfo = new CultureInfo("en-US");
             _cultureInfo.NumberFormat.NumberGroupSeparator = " ";
-
-            Title = "QuickConvert";
 
             _rateVM = new()
             {

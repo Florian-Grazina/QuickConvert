@@ -6,6 +6,7 @@ namespace QuickConvert
     {
         public App()
         {
+            var ok = AppSettingsManager.Instance;
             InitializeComponent();
             MainPage = new AppShell();
         }
