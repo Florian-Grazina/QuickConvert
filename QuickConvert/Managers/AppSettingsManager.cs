@@ -39,7 +39,7 @@ namespace QuickConvert.Managers
             set
             {
                 _appSettings.NumberOfHoursBeforeRefresh = value;
-                SaveSettings();
+                Task.Run(SaveSettings);
             }
         }
 
@@ -68,20 +68,20 @@ namespace QuickConvert.Managers
             if(appSettings == null)
             {
                 appSettings = new();
-                SaveSettings();
+                Task.Run(SaveSettings);
             }
 
             return appSettings;
         }
 
-        private void SaveSettings()
+        private async Task SaveSettings()
         {
             try
             {
-                string json = JsonSerializer.Serialize();
+                string json = JsonConvert.SerializeObject(_appSettings);
 
                 // Write the JSON string to the file
-                await File.WriteAllTextAsync(filePath, json);
+                await File.WriteAllTextAsync(_configFilePath, json);
 
                 File.WriteAllText(_configFilePath, JsonConvert.SerializeObject(_appSettings, Formatting.Indented));
             }
