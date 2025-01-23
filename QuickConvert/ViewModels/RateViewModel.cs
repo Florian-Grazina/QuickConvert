@@ -1,21 +1,28 @@
 ﻿using QuickConvert.API.Enums;
 using QuickConvert.Managers;
+using QuickConvert.Models;
 
 namespace QuickConvert.ViewModels
 {
-    public class RateViewModel
+    public class RateViewModel(Rate rate)
     {
-        public DateTime Date { get; set; }
-        public DateTime ExpirationDate { get; set; }
+        #region data members
+        private readonly Rate _rate = rate;
+        #endregion
 
-        public BaseCurrencyCode BaseCurrencyCode { get; set; }
-        public TargetCurrencyCode TargetCurrencyCode { get; set; }
+        #region properties
+        public DateTime Date => _rate.LastUpdateTime;
+        public DateTime ExpirationDate => _rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
 
-        public double Rate { get; set; }
+        public BaseCurrencyCode BaseCurrencyCode => _rate.BaseCurrencyCode;
+        public TargetCurrencyCode TargetCurrencyCode => _rate.TargetCurrencyCode;
+
+        public double RateAmount => _rate.LastRateAmount;
+        #endregion
 
         public void RefreshRate()
         {
-            Rate = RateManager.Instance.GetRate(BaseCurrencyCode, TargetCurrencyCode);
+            RateManager.Instance.RefreshRate(_rate);
         }
     }
 }

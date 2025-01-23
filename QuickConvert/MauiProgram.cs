@@ -28,7 +28,7 @@ namespace QuickConvert
             builder.Logging.AddDebug();
 #endif
 
-            Task.Run(async () => await RateManager.Instance.Init());
+            Task.Run(RateManager.Instance.Init);
 
             return builder.Build();
         }

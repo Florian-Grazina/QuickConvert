@@ -43,15 +43,22 @@ namespace QuickConvert.Managers
             }
         }
 
-        //public Rate Rate
-        //{
-        //    get => _appSettings.Rate;
-        //    set
-        //    {
-        //        _appSettings.Rate = value;
-        //        SaveSettings();
-        //    }
-        //}
+        public Rate? Rate
+        {
+            get => _appSettings.Rate;
+            private set
+            {
+                _appSettings.Rate = value;
+                Task.Run(SaveSettings);
+            }
+        }
+        #endregion
+
+        #region public methods
+        public void SaveNewRate(Rate rate)
+        {
+            Rate = rate;
+        }
         #endregion
 
         #region private methods

@@ -2,6 +2,7 @@
 using QuickConvert.API.Enums;
 using QuickConvert.API.Models;
 using QuickConvert.API.Services;
+using QuickConvert.Models;
 using System.Reflection;
 
 namespace QuickConvert.Managers
@@ -10,9 +11,7 @@ namespace QuickConvert.Managers
     {
         #region data members
         private static RateManager _instance = default!;
-        private static readonly object lockObject = new ();
-
-        private bool _isBusy;
+        private static readonly object lockObject = new();
 
         private readonly ApiClient _apiClient;
         private readonly List<BaseCurrency> _baseCurrencies;
@@ -41,7 +40,24 @@ namespace QuickConvert.Managers
         #region public methods
         public async Task Init() => await LoadBaseCurrencies();
 
-        public double GetRate(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
+        public Rate GetRate()
+        {
+            Rate? rate = AppSettingsManager.Instance.Rate ?? new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
+
+            if (GetNextRefreshTime(rate) < DateTime.Now)
+                RefreshRate(rate);
+
+            return rate;
+        }
+
+        public void RefreshRate(Rate rate)
+        {
+            rate.LastRateAmount = GetRateAmount(rate.BaseCurrencyCode, rate.TargetCurrencyCode);
+            rate.LastUpdateTime = DateTime.Now;
+            AppSettingsManager.Instance.SaveNewRate(rate);
+        }
+
+        public double GetRateAmount(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
         {
             try
             {
@@ -53,32 +69,33 @@ namespace QuickConvert.Managers
 
                 throw new Exception($"Impossible to find the currency code '{targetCurrencyCode}'");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 throw;
             }
         }
 
-        public async Task<double> Refresh(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
+        public async Task<double> RefreshAmount(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)
         {
             await LoadBaseCurrencies();
-            return GetRate(baseCurrencyCode, targetCurrencyCode);
+            return GetRateAmount(baseCurrencyCode, targetCurrencyCode);
         }
+
+        public DateTime GetNextRefreshTime(Rate rate) => rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
         #endregion
 
         #region private methods
         private async Task LoadBaseCurrencies()
         {
-            _isBusy = true;
             foreach (BaseCurrencyCode baseCurrencyCode in Enum.GetValues<BaseCurrencyCode>())
             {
                 ConversionRates conversionRates = await _apiClient.GetConversionRatesByCurrencyCode(baseCurrencyCode);
-                BaseCurrency baseCurrency = new (baseCurrencyCode, conversionRates);
+                BaseCurrency baseCurrency = new(baseCurrencyCode, conversionRates);
                 _baseCurrencies.Add(baseCurrency);
             }
-            _isBusy = false;
         }
+
         #endregion
     }
 }

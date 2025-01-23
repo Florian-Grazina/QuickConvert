@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using QuickConvert.API.Enums;
 using QuickConvert.Managers;
+using QuickConvert.Models;
 using System.Globalization;
 
 namespace QuickConvert.ViewModels
@@ -11,8 +12,8 @@ namespace QuickConvert.ViewModels
         #region data members
         private bool _isBusy;
 
-        private RateViewModel _rateVM;
-        private CultureInfo _cultureInfo;
+        private RateViewModel _rateVM = default!;
+        private readonly CultureInfo _cultureInfo;
 
         private string input = "0";
         private string output = "0";
@@ -22,42 +23,44 @@ namespace QuickConvert.ViewModels
         public MainViewModel()
         {
             _isBusy = true;
-            Title = AppSettingsManager.Instance.AppName;
-
             _cultureInfo = new CultureInfo("en-US");
             _cultureInfo.NumberFormat.NumberGroupSeparator = " ";
-
-            _rateVM = new()
-            {
-                Date = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddHours(1),
-                BaseCurrencyCode = BaseCurrencyCode.EUR,
-                TargetCurrencyCode = TargetCurrencyCode.JPY
-            };
-
-            _rateVM.RefreshRate();
             _isBusy = false;
 
-            RefreshView();
+            Title = Settings.AppName;
+            RateVm = GetRateViewModel();
         }
         #endregion
 
         #region properties
-        //public AppSettingsManager Settings => AppSettingsManager.Instance;
+        public AppSettingsManager Settings => AppSettingsManager.Instance;
+        public RateManager RateManager => RateManager.Instance;
+
         public DateTime Date => _rateVM.Date;
         public DateTime ExpirationDate => _rateVM.ExpirationDate;
         public string InputCode => _rateVM.BaseCurrencyCode.ToString();
         public string InputFlag => GetFlagPath(InputCode);
         public string OutputCode => _rateVM.TargetCurrencyCode.ToString();
         public string OutputFlag=> GetFlagPath(OutputCode);
-        public double Rate => _rateVM.Rate;
+        public double RateAmount => _rateVM.RateAmount;
 
-        public string RateInformation => $"1 {InputCode} = {Math.Round(Rate, 2)} {OutputCode}";
+        public string RateInformation => $"1 {InputCode} = {Math.Round(RateAmount, 2)} {OutputCode}";
         #endregion
 
         #region observable properties
         [ObservableProperty]
         private string title = default!;
+
+        public RateViewModel RateVm
+        {
+            get => _rateVM;
+            set
+            {
+                SetProperty(ref _rateVM, value);
+                OnPropertyChanged(nameof(Date));
+                OnPropertyChanged(nameof(ExpirationDate));
+            }
+        }
 
         public string Input
         {
@@ -110,7 +113,7 @@ namespace QuickConvert.ViewModels
             try
             {
                 _ = !double.TryParse(input, out double inputAmount);
-                double outputAmount = isReversed ? inputAmount / _rateVM.Rate : inputAmount * _rateVM.Rate;
+                double outputAmount = isReversed ? inputAmount / _rateVM.RateAmount : inputAmount * _rateVM.RateAmount;
 
                 string result = outputAmount.ToString("#,#.##", _cultureInfo);
                 return string.IsNullOrEmpty(result) ? "0" : result;
@@ -125,10 +128,10 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region private methods
-        private void RefreshView()
+        private RateViewModel GetRateViewModel()
         {
-            OnPropertyChanged(nameof(Date));
-            OnPropertyChanged(nameof(ExpirationDate));
+            Rate rate = RateManager.GetRate();
+            return new(rate);
         }
 
         private string GetFlagPath(string currencyCode)
