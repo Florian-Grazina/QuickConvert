@@ -51,11 +51,11 @@ namespace QuickConvert.Managers
             return rate;
         }
 
-        public void RefreshRate(Rate rate)
+        public double RefreshRate(Rate rate)
         {
-            rate.LastRateAmount = GetRateAmount(rate.BaseCurrencyCode, rate.TargetCurrencyCode);
-            rate.LastUpdateTime = DateTime.Now;
+            double newAmount = GetRateAmount(rate.BaseCurrencyCode, rate.TargetCurrencyCode);
             AppSettingsManager.Instance.SaveNewRate(rate);
+            return newAmount;
         }
 
         public double GetRateAmount(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)

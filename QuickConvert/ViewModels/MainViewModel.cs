@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using QuickConvert.API.Enums;
 using QuickConvert.Managers;
 using QuickConvert.Models;
 using System.Globalization;
@@ -12,11 +11,14 @@ namespace QuickConvert.ViewModels
         #region data members
         private bool _isBusy;
 
-        private RateViewModel _rateVM = default!;
+        private readonly RateViewModel _rateVM;
         private readonly CultureInfo _cultureInfo;
 
-        private string input = "0";
-        private string output = "0";
+        private string baseCurrencyInput = "0";
+        private string targetCurrencyOutput = "0";
+
+        private string targetCurrencyInput = string.Empty;
+        private string baseCurrencyOutput = string.Empty;
         #endregion
 
         #region constructor
@@ -28,7 +30,7 @@ namespace QuickConvert.ViewModels
             _isBusy = false;
 
             Title = Settings.AppName;
-            RateVm = GetRateViewModel();
+            _rateVM = GetRateViewModel();
         }
         #endregion
 
@@ -38,52 +40,79 @@ namespace QuickConvert.ViewModels
 
         public DateTime Date => _rateVM.Date;
         public DateTime ExpirationDate => _rateVM.ExpirationDate;
-        public string InputCode => _rateVM.BaseCurrencyCode.ToString();
-        public string InputFlag => GetFlagPath(InputCode);
-        public string OutputCode => _rateVM.TargetCurrencyCode.ToString();
-        public string OutputFlag=> GetFlagPath(OutputCode);
+        public string BaseCurrencyCode => _rateVM.BaseCurrencyCode.ToString();
+        public string BaseCurrencyFlagImg => GetFlagPath(BaseCurrencyCode);
+        public string TargetCurrencyCode => _rateVM.TargetCurrencyCode.ToString();
+        public string TargetCurrencyFlagImg => GetFlagPath(TargetCurrencyCode);
         public double RateAmount => _rateVM.RateAmount;
 
-        public string RateInformation => $"1 {InputCode} = {Math.Round(RateAmount, 2)} {OutputCode}";
+        public string RateInformation => $"1 {BaseCurrencyCode} = {Math.Round(RateAmount, 2)} {TargetCurrencyCode}";
         #endregion
 
         #region observable properties
         [ObservableProperty]
         private string title = default!;
 
-        public RateViewModel RateVm
+        public string BaseCurrencyInput
         {
-            get => _rateVM;
-            set
-            {
-                SetProperty(ref _rateVM, value);
-                OnPropertyChanged(nameof(Date));
-                OnPropertyChanged(nameof(ExpirationDate));
-            }
-        }
-
-        public string Input
-        {
-            get => input;
+            get => baseCurrencyInput;
             set
             {
                 if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
-                SetProperty(ref input, value);
-                output = Convert(input);
-                OnPropertyChanged(nameof(Output));
+                SetProperty(ref baseCurrencyInput, value);
+
+                if (string.IsNullOrEmpty(value))
+                    return;
+
+                BaseCurrencyOutput = string.Empty;
+                TargetCurrencyInput = string.Empty;
+                TargetCurrencyOutput = Convert(baseCurrencyInput);
             }
         }
 
-        public string Output
+        public string TargetCurrencyOutput
         {
-            get => output;
+            get => targetCurrencyOutput;
             set
             {
-                SetProperty(ref output, value);
-                //input = Convert(value);
-                //OnPropertyChanged(nameof(Input));
+                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                    value = value.TrimStart('0');
+
+                SetProperty(ref targetCurrencyOutput, value);
+            }
+        }
+
+        public string TargetCurrencyInput
+        {
+            get => targetCurrencyInput;
+            set
+            {
+
+                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                    value = value.TrimStart('0');
+
+                SetProperty(ref targetCurrencyInput, value);
+
+                if (string.IsNullOrEmpty(value))
+                    return;
+
+                TargetCurrencyOutput = string.Empty;
+                BaseCurrencyInput = string.Empty;
+                BaseCurrencyOutput = Convert(targetCurrencyInput);
+            }
+        }
+
+        public string BaseCurrencyOutput
+        {
+            get => baseCurrencyOutput;
+            set
+            {
+                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                    value = value.TrimStart('0');
+
+                SetProperty(ref baseCurrencyOutput, value);
             }
         }
         #endregion
@@ -97,13 +126,15 @@ namespace QuickConvert.ViewModels
 
             _isBusy = true;
             _rateVM.RefreshRate();
+            OnPropertyChanged(nameof(Date));
+            OnPropertyChanged(nameof(ExpirationDate));
             _isBusy = false;
         }
 
         [RelayCommand]
         private void Clear()
         {
-            Input = "0";
+            BaseCurrencyInput = "0";
         }
         #endregion
 
@@ -112,11 +143,10 @@ namespace QuickConvert.ViewModels
         {
             try
             {
-                _ = !double.TryParse(input, out double inputAmount);
-                double outputAmount = isReversed ? inputAmount / _rateVM.RateAmount : inputAmount * _rateVM.RateAmount;
-
-                string result = outputAmount.ToString("#,#.##", _cultureInfo);
-                return string.IsNullOrEmpty(result) ? "0" : result;
+                string result = _rateVM.CalculateRate(_cultureInfo, input, isReversed);
+                OnPropertyChanged(nameof(Date));
+                OnPropertyChanged(nameof(ExpirationDate));
+                return result;
             }
             catch (Exception ex)
             {

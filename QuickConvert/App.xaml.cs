@@ -7,6 +7,7 @@ namespace QuickConvert
         public App()
         {
             var ok = AppSettingsManager.Instance;
+            UserAppTheme = AppTheme.Dark;
             InitializeComponent();
             MainPage = new AppShell();
         }
