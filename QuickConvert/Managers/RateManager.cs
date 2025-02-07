@@ -38,14 +38,15 @@ namespace QuickConvert.Managers
         #endregion
 
         #region public methods
-        public async Task Init() => await LoadBaseCurrencies();
+        //public async Task Init() => await LoadBaseCurrencies();
 
         public Rate GetRate()
         {
             Rate? rate = AppSettingsManager.Instance.Rate ?? new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
 
             if (GetNextRefreshTime(rate) < DateTime.Now)
-                RefreshRate(rate);
+                if(Connectivity.NetworkAccess == NetworkAccess.Internet)
+                    RefreshRate(rate);
 
             return rate;
         }
