@@ -5,7 +5,7 @@ namespace QuickConvert
     public partial class MainPage : ContentPage
     {
         #region data members
-        private readonly MainViewModel _viewModel;
+        private MainViewModel _viewModel;
         #endregion
 
         public MainPage(MainViewModel viewModel)
@@ -13,6 +13,10 @@ namespace QuickConvert
             _viewModel = viewModel;
             BindingContext = _viewModel;
             InitializeComponent();
+        }
+
+        private async void ContentPage_Loaded(object sender, EventArgs e)
+        {
         }
     }
 }

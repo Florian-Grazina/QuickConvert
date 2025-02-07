@@ -32,9 +32,9 @@ namespace QuickConvert.ViewModels
         public TargetCurrencyCode TargetCurrencyCode => _rate.TargetCurrencyCode;
         #endregion
 
-        public void RefreshRate()
+        public async void RefreshRate()
         {
-            double newRate = RateManager.Instance.RefreshRate(_rate);
+            double newRate = await RateManager.Instance.RefreshRate(_rate);
             RateAmount = newRate;
             Date = DateTime.Now;
         }

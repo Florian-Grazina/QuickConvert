@@ -11,7 +11,7 @@ namespace QuickConvert.ViewModels
         #region data members
         private bool _isBusy;
 
-        private readonly RateViewModel _rateVM;
+        private RateViewModel _rateVM;
         private readonly CultureInfo _cultureInfo;
 
         private string baseCurrencyInput = "0";
@@ -30,7 +30,6 @@ namespace QuickConvert.ViewModels
             _isBusy = false;
 
             Title = Settings.AppName;
-            _rateVM = GetRateViewModel();
         }
         #endregion
 
@@ -117,6 +116,13 @@ namespace QuickConvert.ViewModels
         }
         #endregion
 
+        #region public methods
+        public async Task LoadWindow()
+        {
+            _rateVM = await GetRateViewModel();
+        }
+        #endregion
+
         #region commands
         [RelayCommand]
         private void ForceRefreshRate()
@@ -158,9 +164,9 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region private methods
-        private RateViewModel GetRateViewModel()
+        private async Task<RateViewModel> GetRateViewModel()
         {
-            Rate rate = RateManager.GetRate();
+            Rate rate = await RateManager.LoadRate();
             return new(rate);
         }
 
