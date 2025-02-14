@@ -43,9 +43,6 @@ namespace QuickConvert.Managers
         public async Task<Rate?> LoadRate()
         {
             Rate? rate = AppSettingsManager.Instance.Rate;
-
-            rate = null;
-
             await RefreshRate(rate);
 
             return rate;
@@ -53,8 +50,7 @@ namespace QuickConvert.Managers
 
         public async Task RefreshRate(Rate? rate)
         {
-            //if (Connectivity.NetworkAccess != NetworkAccess.Internet)
-            if (true)
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
                 return;
 
             if(rate == null)

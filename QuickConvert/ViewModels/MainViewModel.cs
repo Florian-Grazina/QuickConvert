@@ -31,7 +31,7 @@ namespace QuickConvert.ViewModels
             _isBusy = false;
 
             Title = Settings.AppName;
-            IsLoaded = false;ain
+            IsLoaded = false;
         }
         #endregion
 
@@ -144,7 +144,7 @@ namespace QuickConvert.ViewModels
         [RelayCommand]
         private void ForceRefreshRate()
         {
-            if (_isBusy || !IsLoaded)
+            if (_isBusy)
                 return;
 
             _isBusy = true;
