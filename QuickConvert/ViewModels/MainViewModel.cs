@@ -110,7 +110,7 @@ namespace QuickConvert.ViewModels
 
                 TargetCurrencyOutput = string.Empty;
                 BaseCurrencyInput = string.Empty;
-                BaseCurrencyOutput = Convert(targetCurrencyInput);
+                BaseCurrencyOutput = Convert(targetCurrencyInput, true);
             }
         }
 
