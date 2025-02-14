@@ -14,9 +14,5 @@ namespace QuickConvert
             BindingContext = _viewModel;
             InitializeComponent();
         }
-
-        private async void ContentPage_Loaded(object sender, EventArgs e)
-        {
-        }
     }
 }

@@ -13,16 +13,8 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region observable properties
-        public DateTime Date
-        {
-            get => _rate.LastUpdateTime;
-            set => SetProperty(Date, value, _rate, (r, d) => r.LastUpdateTime = value);
-        }
-        public double RateAmount
-        {
-            get => _rate.LastRateAmount;
-            set => SetProperty(RateAmount, value, _rate, (r, d) => r.LastRateAmount = value);
-        }
+        public DateTime Date => _rate.LastUpdateTime;
+        public double RateAmount => _rate.LastRateAmount;
         #endregion
 
         #region properties
@@ -34,9 +26,8 @@ namespace QuickConvert.ViewModels
 
         public async void RefreshRate()
         {
-            double newRate = await RateManager.Instance.RefreshRate(_rate);
-            RateAmount = newRate;
-            Date = DateTime.Now;
+            await RateManager.Instance.RefreshRate(_rate);
+            OnPropertyChanged(nameof(RateAmount));
         }
 
         public string CalculateRate(CultureInfo cultureInfo, string input, bool isReversed)

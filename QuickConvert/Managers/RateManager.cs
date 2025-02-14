@@ -40,26 +40,34 @@ namespace QuickConvert.Managers
         #region public methods
         //public async Task Init() => await LoadBaseCurrencies();
 
-        public async Task<Rate> LoadRate()
+        public async Task<Rate?> LoadRate()
         {
-            Rate? rate = AppSettingsManager.Instance.Rate ?? new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
+            Rate? rate = AppSettingsManager.Instance.Rate;
+
+            rate = null;
+
             await RefreshRate(rate);
 
             return rate;
         }
 
-        public async Task<double> RefreshRate(Rate rate)
+        public async Task RefreshRate(Rate? rate)
         {
-            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
-                return rate.LastRateAmount;
+            //if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (true)
+                return;
+
+            if(rate == null)
+                rate = new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
 
             if (GetNextRefreshTime(rate) > DateTime.Now)
-                return rate.LastRateAmount;
+                return;
 
             await LoadBaseCurrencies();
             double newAmount = GetRateAmount(rate.BaseCurrencyCode, rate.TargetCurrencyCode);
+            rate.LastRateAmount = newAmount;
+            rate.LastUpdateTime = DateTime.Now;
             AppSettingsManager.Instance.SaveNewRate(rate);
-            return newAmount;
         }
 
         public double GetRateAmount(BaseCurrencyCode baseCurrencyCode, TargetCurrencyCode targetCurrencyCode)

@@ -24,12 +24,14 @@ namespace QuickConvert.ViewModels
         #region constructor
         public MainViewModel()
         {
+            _rateVM = default!;
             _isBusy = true;
             _cultureInfo = new CultureInfo("en-US");
             _cultureInfo.NumberFormat.NumberGroupSeparator = " ";
             _isBusy = false;
 
             Title = Settings.AppName;
+            IsLoaded = false;ain
         }
         #endregion
 
@@ -52,6 +54,9 @@ namespace QuickConvert.ViewModels
         [ObservableProperty]
         private string title = default!;
 
+        [ObservableProperty]
+        private bool isLoaded;
+
         public string BaseCurrencyInput
         {
             get => baseCurrencyInput;
@@ -63,6 +68,9 @@ namespace QuickConvert.ViewModels
                 SetProperty(ref baseCurrencyInput, value);
 
                 if (string.IsNullOrEmpty(value))
+                    return;
+
+                if(!IsLoaded)
                     return;
 
                 BaseCurrencyOutput = string.Empty;
@@ -97,6 +105,9 @@ namespace QuickConvert.ViewModels
                 if (string.IsNullOrEmpty(value))
                     return;
 
+                if (!IsLoaded)
+                    return;
+
                 TargetCurrencyOutput = string.Empty;
                 BaseCurrencyInput = string.Empty;
                 BaseCurrencyOutput = Convert(targetCurrencyInput);
@@ -117,9 +128,15 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region public methods
-        public async Task LoadWindow()
+        public async Task LoadDataAsync()
         {
-            _rateVM = await GetRateViewModel();
+            RateViewModel? rateVm = await GetRateViewModel();
+
+            if (rateVm != null)
+            {
+                IsLoaded = true;
+                _rateVM = rateVm;
+            }
         }
         #endregion
 
@@ -127,7 +144,7 @@ namespace QuickConvert.ViewModels
         [RelayCommand]
         private void ForceRefreshRate()
         {
-            if (_isBusy)
+            if (_isBusy || !IsLoaded)
                 return;
 
             _isBusy = true;
@@ -164,9 +181,13 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region private methods
-        private async Task<RateViewModel> GetRateViewModel()
+        private async Task<RateViewModel?> GetRateViewModel()
         {
-            Rate rate = await RateManager.LoadRate();
+            Rate? rate = await RateManager.LoadRate();
+
+            if (rate == null)
+                return null;
+
             return new(rate);
         }
 

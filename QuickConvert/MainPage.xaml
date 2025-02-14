@@ -5,7 +5,6 @@
              xmlns:font="clr-namespace:QuickConvert.FontAwesome"
              x:DataType="vm:MainViewModel"
              x:Class="QuickConvert.MainPage"
-             Loaded="ContentPage_Loaded"
              Title="{Binding Title}">
 
     <VerticalStackLayout Padding="10">

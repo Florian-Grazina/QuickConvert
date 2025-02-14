@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using AndroidX.Lifecycle;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using QuickConvert.Managers;
 using QuickConvert.ViewModels;
@@ -22,14 +23,16 @@ namespace QuickConvert
                 });
 
             builder.Services.AddScoped<MainPage>();
-            builder.Services.AddScoped<MainViewModel>();
+            builder.Services.AddTransient(provider =>
+            {
+                MainViewModel viewModel = new();
+                Task.Run(() => viewModel.LoadDataAsync()).Wait();
+                return viewModel;
+            });
 
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-
-            //Task.Run(RateManager.Instance.Init);
-
             return builder.Build();
         }
     }
