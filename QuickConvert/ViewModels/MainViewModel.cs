@@ -148,7 +148,7 @@ namespace QuickConvert.ViewModels
                 return;
 
             _isBusy = true;
-            _rateVM.RefreshRate();
+            _rateVM.ForceRefresh();
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
             _isBusy = false;

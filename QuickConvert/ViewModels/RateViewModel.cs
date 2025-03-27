@@ -30,6 +30,14 @@ namespace QuickConvert.ViewModels
             OnPropertyChanged(nameof(RateAmount));
         }
 
+        public async void ForceRefresh()
+        {
+            if (_rate != null)
+                _rate.LastUpdateTime = DateTime.MinValue;
+
+            await RateManager.Instance.RefreshRate(_rate);
+        }
+
         public string CalculateRate(CultureInfo cultureInfo, string input, bool isReversed)
         {
             if (DateTime.Now > ExpirationDate)

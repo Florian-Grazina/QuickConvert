@@ -56,7 +56,8 @@ namespace QuickConvert.Managers
             if(rate == null)
                 rate = new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
 
-            if (GetNextRefreshTime(rate) > DateTime.Now)
+            DateTime nextRefreshRate = GetNextRefreshTime(rate);
+            if (nextRefreshRate > DateTime.Now)
                 return;
 
             await LoadBaseCurrencies();
