@@ -36,8 +36,8 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region properties
-        public AppSettingsManager Settings => AppSettingsManager.Instance;
-        public RateManager RateManager => RateManager.Instance;
+        private AppSettingsManager Settings => AppSettingsManager.Instance;
+        private RateManager RateManager => RateManager.Instance;
 
         public DateTime Date => _rateVM.Date;
         public DateTime ExpirationDate => _rateVM.ExpirationDate;
