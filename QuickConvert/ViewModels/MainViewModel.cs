@@ -68,9 +68,12 @@ namespace QuickConvert.ViewModels
                 SetProperty(ref baseCurrencyInput, value);
 
                 if (string.IsNullOrEmpty(value))
+                {
+                    TargetCurrencyOutput = value;
                     return;
+                }
 
-                if(!IsLoaded)
+                if (!IsLoaded)
                     return;
 
                 BaseCurrencyOutput = string.Empty;
@@ -102,7 +105,10 @@ namespace QuickConvert.ViewModels
                 SetProperty(ref targetCurrencyInput, value);
 
                 if (string.IsNullOrEmpty(value))
+                {
+                    BaseCurrencyOutput = value;
                     return;
+                }
 
                 if (!IsLoaded)
                     return;

@@ -18,8 +18,7 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region properties
-        public DateTime ExpirationDate => _rate.LastUpdateTime.AddMinutes(1);
-        //public DateTime ExpirationDate => _rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
+        public DateTime ExpirationDate => _rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
 
         public BaseCurrencyCode BaseCurrencyCode => _rate.BaseCurrencyCode;
         public TargetCurrencyCode TargetCurrencyCode => _rate.TargetCurrencyCode;
