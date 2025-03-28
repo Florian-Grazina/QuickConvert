@@ -10,6 +10,7 @@ namespace QuickConvert.ViewModels
     {
         #region data members
         private bool _isBusy;
+        private Entry _focusedEntry;
 
         private RateViewModel _rateVM;
         private readonly CultureInfo _cultureInfo;
@@ -163,6 +164,20 @@ namespace QuickConvert.ViewModels
         private void Clear()
         {
             BaseCurrencyInput = "0";
+        }
+
+        [RelayCommand]
+        public void SetFocusedEntry(Entry entry)
+        {
+            _focusedEntry = entry;
+        }
+
+        [RelayCommand]
+        public void AddDigit(string digit)
+        {
+            if (_focusedEntry.Text.Contains('.') && digit == ".")
+                return;
+            _focusedEntry.Text += digit;
         }
         #endregion
 

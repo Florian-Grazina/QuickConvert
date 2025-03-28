@@ -37,14 +37,19 @@
                 <FlexLayout JustifyContent="SpaceBetween">
                     <Grid FlexLayout.Grow="1">
                         <Entry Text="{Binding BaseCurrencyOutput}" />
-                        <Entry Text="{Binding BaseCurrencyInput}"
-                               Keyboard="Numeric" />
+                        <Entry x:Name="BaseCurrencyInputEntry"
+                               Text="{Binding BaseCurrencyInput}"
+                               IsReadOnly="True">
+                            <Entry.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetFocusedEntryCommand}"
+                                                      CommandParameter="{Binding Source={x:Reference BaseCurrencyInputEntry}}" />
+                            </Entry.GestureRecognizers>
+                        </Entry>
                     </Grid>
 
                     <Border StrokeThickness="0"
                             WidthRequest="70">
                         <Grid>
-
                             <Image Source="{Binding BaseCurrencyFlagImg}"
                                    Aspect="AspectFill" />
                             <Rectangle Margin="-1"
@@ -70,15 +75,19 @@
                 <FlexLayout JustifyContent="SpaceBetween">
                     <Grid FlexLayout.Grow="1">
                         <Entry Text="{Binding TargetCurrencyOutput}" />
-                        <Entry Text="{Binding TargetCurrencyInput}"
-                               Background="Transparent"
-                               Keyboard="Numeric" />
+                        <Entry x:Name="TargetCurrencyInput"
+                               Text="{Binding TargetCurrencyInput}"
+                               IsReadOnly="True">
+                            <Entry.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetFocusedEntryCommand}"
+                                                      CommandParameter="{Binding Source={x:Reference TargetCurrencyInput}}" />
+                            </Entry.GestureRecognizers>
+                        </Entry>
                     </Grid>
 
                     <Border StrokeThickness="0"
                             WidthRequest="70">
                         <Grid>
-
                             <Image Source="{Binding TargetCurrencyFlagImg}"
                                    Aspect="AspectFill" />
                             <Rectangle Margin="-1"
@@ -97,7 +106,7 @@
                 </FlexLayout>
             </Border>
 
-            <StackLayout Margin="10"
+            <StackLayout Margin="10,20,10,10"
                          HorizontalOptions="Center">
                 <Label HorizontalOptions="Center"
                        FontSize="16"
@@ -105,7 +114,6 @@
                 <Label HorizontalOptions="Center"
                        FontSize="16"
                        Text="{Binding RateInformation}" />
-
             </StackLayout>
 
             <!--<Button Text="Refresh"
@@ -140,46 +148,69 @@
             <Button Grid.Column="1"
                     Grid.Row="0"
                     Text="1"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="1"
                     Style="{StaticResource PadButton}" />
+
             <Button Grid.Column="1"
                     Grid.Row="1"
                     Text="4"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="4"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="1"
                     Grid.Row="2"
                     Text="7"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="7"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="2"
                     Grid.Row="0"
                     Text="2"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="2"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="2"
                     Grid.Row="1"
                     Text="5"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="5"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="2"
                     Grid.Row="2"
                     Text="8"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="8"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="3"
                     Grid.Row="0"
                     Text="3"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="3"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="3"
                     Grid.Row="1"
                     Text="6"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="6"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="3"
                     Grid.Row="2"
                     Text="9"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="9"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="1"
                     Grid.Row="3"
                     Text="."
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="."
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="2"
                     Grid.Row="3"
                     Text="0"
+                    Command="{Binding AddDigitCommand}"
+                    CommandParameter="0"
                     Style="{StaticResource PadButton}" />
             <Button Grid.Column="3"
                     Grid.Row="3"
