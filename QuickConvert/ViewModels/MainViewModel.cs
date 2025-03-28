@@ -75,7 +75,7 @@ namespace QuickConvert.ViewModels
 
                 BaseCurrencyOutput = string.Empty;
                 TargetCurrencyInput = string.Empty;
-                TargetCurrencyOutput = Convert(baseCurrencyInput);
+                Task.Run(async () => TargetCurrencyOutput = await Convert(baseCurrencyInput, false));
             }
         }
 
@@ -96,7 +96,6 @@ namespace QuickConvert.ViewModels
             get => targetCurrencyInput;
             set
             {
-
                 if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
@@ -110,7 +109,7 @@ namespace QuickConvert.ViewModels
 
                 TargetCurrencyOutput = string.Empty;
                 BaseCurrencyInput = string.Empty;
-                BaseCurrencyOutput = Convert(targetCurrencyInput, true);
+                Task.Run(async () => BaseCurrencyOutput = await Convert(targetCurrencyInput, true));
             }
         }
 
@@ -162,13 +161,15 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region public methods
-        public string Convert(string input, bool isReversed = false)
+        public async Task<string> Convert(string input, bool isReversed = false)
         {
             try
             {
-                string result = _rateVM.CalculateRate(_cultureInfo, input, isReversed);
-                OnPropertyChanged(nameof(Date));
-                OnPropertyChanged(nameof(ExpirationDate));
+                if (DateTime.Now > _rateVM.ExpirationDate)
+                    await RefreshRate();
+
+                string result = _rateVM.GetRateAmount(_cultureInfo, input, isReversed);
+
                 return result;
             }
             catch (Exception ex)
@@ -189,6 +190,14 @@ namespace QuickConvert.ViewModels
                 return null;
 
             return new(rate);
+        }
+
+        private async Task RefreshRate()
+        {
+            await _rateVM.RefreshRate();
+            OnPropertyChanged(nameof(RateAmount));
+            OnPropertyChanged(nameof(Date));
+            OnPropertyChanged(nameof(ExpirationDate));
         }
 
         private string GetFlagPath(string currencyCode)

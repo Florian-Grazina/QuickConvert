@@ -18,16 +18,16 @@ namespace QuickConvert.ViewModels
         #endregion
 
         #region properties
-        public DateTime ExpirationDate => _rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
+        public DateTime ExpirationDate => _rate.LastUpdateTime.AddMinutes(1);
+        //public DateTime ExpirationDate => _rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
 
         public BaseCurrencyCode BaseCurrencyCode => _rate.BaseCurrencyCode;
         public TargetCurrencyCode TargetCurrencyCode => _rate.TargetCurrencyCode;
         #endregion
 
-        public async void RefreshRate()
+        public async Task RefreshRate()
         {
             await RateManager.Instance.RefreshRate(_rate);
-            OnPropertyChanged(nameof(RateAmount));
         }
 
         public async Task ForceRefresh()
@@ -38,11 +38,8 @@ namespace QuickConvert.ViewModels
             await RateManager.Instance.RefreshRate(_rate);
         }
 
-        public string CalculateRate(CultureInfo cultureInfo, string input, bool isReversed)
+        public string GetRateAmount(CultureInfo cultureInfo, string input, bool isReversed)
         {
-            if (DateTime.Now > ExpirationDate)
-                RefreshRate();
-
             if (string.IsNullOrEmpty(input))
                 return input;
 

@@ -29,7 +29,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <VerticalStackLayout Padding="10" VerticalOptions="Center">
+        <VerticalStackLayout Padding="10"
+                             VerticalOptions="Center">
 
             <Border Padding="10,2,2,2"
                     HeightRequest="50">
@@ -107,12 +108,20 @@
 
             </StackLayout>
 
-            <Button Text="Refresh"
+            <!--<Button Text="Refresh"
                     Command="{Binding ForceRefreshRateCommand}"
-                    WidthRequest="150" />
+                    WidthRequest="150" />-->
+
+            <Label Text="Next Refresh: "
+                   FontSize="16"
+                   HorizontalOptions="Center" />
+            <Label FontSize="16"
+                   HorizontalOptions="Center"
+                   Text="{Binding ExpirationDate}" />
 
         </VerticalStackLayout>
-        <Grid Grid.Row="1" VerticalOptions="Center">
+        <Grid Grid.Row="1"
+              VerticalOptions="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />

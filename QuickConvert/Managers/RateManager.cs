@@ -56,10 +56,6 @@ namespace QuickConvert.Managers
             if(rate == null)
                 rate = new(BaseCurrencyCode.EUR, TargetCurrencyCode.JPY);
 
-            DateTime nextRefreshRate = GetNextRefreshTime(rate);
-            if (nextRefreshRate > DateTime.Now)
-                return;
-
             await LoadBaseCurrencies();
             double newAmount = GetRateAmount(rate.BaseCurrencyCode, rate.TargetCurrencyCode);
             rate.LastRateAmount = newAmount;
@@ -85,8 +81,6 @@ namespace QuickConvert.Managers
                 throw;
             }
         }
-
-        public DateTime GetNextRefreshTime(Rate rate) => rate.LastUpdateTime.AddHours(AppSettingsManager.Instance.NumberOfHoursBeforeRefresh);
         #endregion
 
         #region private methods
