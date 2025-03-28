@@ -30,7 +30,7 @@ namespace QuickConvert.ViewModels
             OnPropertyChanged(nameof(RateAmount));
         }
 
-        public async void ForceRefresh()
+        public async Task ForceRefresh()
         {
             if (_rate != null)
                 _rate.LastUpdateTime = DateTime.MinValue;

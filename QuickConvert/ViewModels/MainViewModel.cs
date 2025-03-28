@@ -142,13 +142,13 @@ namespace QuickConvert.ViewModels
 
         #region commands
         [RelayCommand]
-        private void ForceRefreshRate()
+        private async Task ForceRefreshRate()
         {
             if (_isBusy)
                 return;
 
             _isBusy = true;
-            _rateVM.ForceRefresh();
+            await _rateVM.ForceRefresh();
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(ExpirationDate));
             _isBusy = false;

@@ -29,7 +29,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <VerticalStackLayout Padding="10">
+        <VerticalStackLayout Padding="10" VerticalOptions="Center">
 
             <Border Padding="10,2,2,2"
                     HeightRequest="50">
@@ -112,7 +112,7 @@
                     WidthRequest="150" />
 
         </VerticalStackLayout>
-        <Grid Grid.Row="1" VerticalOptions="End">
+        <Grid Grid.Row="1" VerticalOptions="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="65" />
                 <RowDefinition Height="65" />
