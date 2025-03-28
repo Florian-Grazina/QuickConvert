@@ -10,10 +10,10 @@ namespace QuickConvert
 
         public MainPage(MainViewModel viewModel)
         {
+            InitializeComponent();
             _viewModel = viewModel;
             _viewModel.SetFocusedEntry(BaseCurrencyInputEntry);
             BindingContext = _viewModel;
-            InitializeComponent();
         }
     }
 }

@@ -173,11 +173,18 @@ namespace QuickConvert.ViewModels
         }
 
         [RelayCommand]
-        public void AddDigit(string digit)
+        private void AddDigit(string digit)
         {
             if (_focusedEntry.Text.Contains('.') && digit == ".")
                 return;
             _focusedEntry.Text += digit;
+        }
+
+        [RelayCommand]
+        private void RemoveDigit()
+        {
+            if (!string.IsNullOrEmpty(_focusedEntry.Text))
+                _focusedEntry.Text = _focusedEntry.Text[..^1];
         }
         #endregion
 
