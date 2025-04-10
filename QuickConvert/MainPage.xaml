@@ -17,7 +17,9 @@
             <Setter Property="TextColor"
                     Value="White" />
             <Setter Property="FontSize"
-                    Value="20" />
+                    Value="22" />
+            <Setter Property="FontAttributes"
+                    Value="Bold" />
             <Setter Property="CornerRadius"
                     Value="10" />
         </Style>
@@ -146,16 +148,16 @@
                 <ColumnDefinition Width="0.1*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="3"
-                    Grid.Row="0"
-                    Background="#999"
-                    WidthRequest="80"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    Command="{Binding RemoveDigitCommand}"
-                    Style="{StaticResource PadButton}">
-            </Button>
-            <!--<font:FontAwesomeLabel Text="{x:Static font:FontAwesomeIcons.Backspace}" />-->
+            <font:FontAwesomeButton Grid.Column="3"
+                                    Grid.Row="0"
+                                    Background="#999"
+                                    WidthRequest="80"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="End"
+                                    Text="{x:Static font:FontAwesomeIcon.AngleLeft}"
+                                    Command="{Binding RemoveDigitCommand}"
+                                    Style="{StaticResource PadButton}">
+            </font:FontAwesomeButton>
             <Button Grid.Column="1"
                     Grid.Row="1"
                     Text="1"

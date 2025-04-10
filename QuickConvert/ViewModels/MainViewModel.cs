@@ -10,7 +10,7 @@ namespace QuickConvert.ViewModels
     {
         #region data members
         private bool _isBusy;
-        private Entry _focusedEntry;
+        private Entry? _focusedEntry;
 
         private RateViewModel _rateVM;
         private readonly CultureInfo _cultureInfo;
@@ -63,7 +63,7 @@ namespace QuickConvert.ViewModels
             get => baseCurrencyInput;
             set
             {
-                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                if (value.StartsWith('0') && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
                 SetProperty(ref baseCurrencyInput, value);
@@ -88,7 +88,7 @@ namespace QuickConvert.ViewModels
             get => targetCurrencyOutput;
             set
             {
-                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                if (value.StartsWith('0') && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
                 SetProperty(ref targetCurrencyOutput, value);
@@ -100,7 +100,7 @@ namespace QuickConvert.ViewModels
             get => targetCurrencyInput;
             set
             {
-                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                if (value.StartsWith('0') && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
                 SetProperty(ref targetCurrencyInput, value);
@@ -125,7 +125,7 @@ namespace QuickConvert.ViewModels
             get => baseCurrencyOutput;
             set
             {
-                if (value.StartsWith("0") && value.Length > 1 && value[1] != '.')
+                if (value.StartsWith('0') && value.Length > 1 && value[1] != '.')
                     value = value.TrimStart('0');
 
                 SetProperty(ref baseCurrencyOutput, value);
@@ -175,15 +175,15 @@ namespace QuickConvert.ViewModels
         [RelayCommand]
         private void AddDigit(string digit)
         {
-            if (_focusedEntry.Text.Contains('.') && digit == ".")
+            if (_focusedEntry?.Text.Contains('.') ?? false && digit == ".")
                 return;
-            _focusedEntry.Text += digit;
+            _focusedEntry!.Text += digit;
         }
 
         [RelayCommand]
         private void RemoveDigit()
         {
-            if (!string.IsNullOrEmpty(_focusedEntry.Text))
+            if (!string.IsNullOrEmpty(_focusedEntry?.Text))
                 _focusedEntry.Text = _focusedEntry.Text[..^1];
         }
         #endregion

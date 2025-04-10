@@ -1,8 +1,8 @@
 ﻿namespace QuickConvert.FontAwesome
 {
-    public class FontAwesomeLabel : Button
+    public class FontAwesomeButton : Button
     {
-        public FontAwesomeLabel()
+        public FontAwesomeButton()
         {
             Populate();
         }
@@ -14,12 +14,12 @@
         }
 
         public static readonly BindableProperty UseSolidFontProperty =
-            BindableProperty.Create(nameof(UseSolidFont), typeof(bool), typeof(FontAwesomeLabel),
+            BindableProperty.Create(nameof(UseSolidFont), typeof(bool), typeof(FontAwesomeButton),
                 defaultValue: false,
                 propertyChanged: (bindable, oldValue, newValue) =>
                 {
 
-                    ((FontAwesomeLabel)bindable).Populate();
+                    ((FontAwesomeButton)bindable).Populate();
                 });
 
         private void Populate()
